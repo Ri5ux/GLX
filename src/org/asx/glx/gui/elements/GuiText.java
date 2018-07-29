@@ -7,7 +7,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import org.asx.glx.gui.forms.GuiForm;
-import org.asx.glx.opengl.BufferTexture;
 import org.asx.glx.opengl.GaussianFilter;
 import org.asx.glx.opengl.Sprite;
 import org.newdawn.slick.Color;
@@ -46,9 +45,16 @@ public class GuiText extends GuiElement
 	}
 
 	@Override
+	public void render()
+	{
+		this.render(this.x, this.y);
+	}
+
+	@Override
 	public void render(int x, int y)
 	{
-		super.render(x, y);
+		this.x = x;
+		this.y = y;
 
 		if (this.text != null)
 		{
@@ -80,10 +86,10 @@ public class GuiText extends GuiElement
 					gaussianFilter.filter(fontImage, blurredImage);
 
 					blurredImage.getGraphics().drawImage(fontImage, 0, 0, null);
-					this.cachedTextShadow = new Sprite(new BufferTexture(blurredImage));
+					this.cachedTextShadow = new Sprite(blurredImage);
 				}
 
-				this.cachedText = new Sprite(new BufferTexture(fontImage));
+				this.cachedText = new Sprite(fontImage);
 
 				this.isDirty = false;
 			}
@@ -92,11 +98,11 @@ public class GuiText extends GuiElement
 			{
 				Color col = new Color(this.shadowColor.r, this.shadowColor.g, this.shadowColor.b, this.shadowColor.a * this.form.getFade());
 				col.bind();
-				this.cachedTextShadow.render(this.getFadingX(), y);
+				this.cachedTextShadow.draw(this.leftPadding + this.getFadingX(), this.topPadding + y);
 			}
 
 			this.getColor().bind();
-			this.cachedText.render(this.getFadingX(), y);
+			this.cachedText.draw(this.leftPadding + this.getFadingX(), this.topPadding + y);
 		}
 	}
 
@@ -107,8 +113,11 @@ public class GuiText extends GuiElement
 
 	public void setText(String text)
 	{
-		this.text = text;
-		this.isDirty = true;
+		if (!text.equals(this.text))
+		{
+			this.text = text;
+			this.isDirty = true;
+		}
 	}
 
 	@Override

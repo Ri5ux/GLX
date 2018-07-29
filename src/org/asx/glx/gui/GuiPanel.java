@@ -12,95 +12,105 @@ import org.lwjgl.opengl.Display;
 
 public class GuiPanel
 {
-    private Theme theme;
-    private ArrayList<GuiForm> forms = new ArrayList<GuiForm>();
-    private ArrayList<GuiForm> addForms = new ArrayList<GuiForm>();
-    private ArrayList<GuiForm> removeForms = new ArrayList<GuiForm>();
+	private Theme theme;
+	private ArrayList<GuiForm> forms = new ArrayList<GuiForm>();
+	private ArrayList<GuiForm> addForms = new ArrayList<GuiForm>();
+	private ArrayList<GuiForm> removeForms = new ArrayList<GuiForm>();
 
-    public GuiPanel(Theme theme)
-    {
-        this.theme = theme;
-    }
+	public GuiPanel(Theme theme)
+	{
+		this.theme = theme;
+	}
 
-    public void render()
-    {
-        this.forms.addAll(this.addForms);
-        this.addForms.clear();
+	public void render()
+	{
+		this.forms.addAll(this.addForms);
+		this.addForms.clear();
 
-        this.forms.removeAll(this.removeForms);
-        this.removeForms.clear();
+		this.forms.removeAll(this.removeForms);
+		this.removeForms.clear();
 
-        this.processKeyEvents();
-        this.processMouseEvents();
+		this.processKeyEvents();
+		this.processMouseEvents();
 
-        for (GuiForm form : this.forms)
-        {
-            form.render();
-        }
-    }
+		for (GuiForm form : this.forms)
+		{
+			form.render();
+		}
+	}
 
-    private void processMouseEvents()
-    {
-        while (Mouse.next())
-        {
-            if (Mouse.getEventButtonState() && (Mouse.getEventButton() == 0))
-            {
-                GuiTextfield.activeTextfield = null;
+	private void processMouseEvents()
+	{
+		while (Mouse.next())
+		{
+			int dwheel = Mouse.getDWheel();
 
-                int x = Mouse.getEventX();
-                int y = Display.getHeight() - Mouse.getEventY();
+			if (Mouse.getEventButton() == -1 && dwheel != 0)
+			{
+				for (GuiForm form : this.forms)
+				{
+					form.onScroll(dwheel);
+				}
+			}
 
-                for (GuiForm form : this.forms)
-                {
-                    for (GuiElement element : form.getElements())
-                    {
-                        if (element.containsPoint(x, y))
-                        {
-                            form.onElementClick(element);
-                        }
-                    }
-                }
-            }
-        }
-    }
+			if (Mouse.getEventButtonState() && (Mouse.getEventButton() == 0))
+			{
+				GuiTextfield.activeTextfield = null;
 
-    private void processKeyEvents()
-    {
-        while (Keyboard.next())
-        {
-            if (Keyboard.getEventKeyState())
-            {
-                int key = Keyboard.getEventKey();
-                char character = Keyboard.getEventCharacter();
-                boolean repeated = Keyboard.isRepeatEvent();
+				int x = Mouse.getEventX();
+				int y = Display.getHeight() - Mouse.getEventY();
 
-                for (GuiForm form : this.forms)
-                {
-                    for (GuiElement element : form.getElements())
-                    {
-                        element.onKey(key, character, repeated);
-                    }
-                    if (!Keyboard.isRepeatEvent())
-                    {
-                        form.onKey(key, character);
-                    }
-                }
-            }
-        }
-    }
+				for (GuiForm form : this.forms)
+				{
+					for (GuiElement element : form.getElements())
+					{
+						if (element.containsPoint(x, y))
+						{
+							form.onElementClick(element);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    public void add(GuiForm form)
-    {
-        this.addForms.add(form);
-    }
+	private void processKeyEvents()
+	{
+		while (Keyboard.next())
+		{
+			if (Keyboard.getEventKeyState())
+			{
+				int key = Keyboard.getEventKey();
+				char character = Keyboard.getEventCharacter();
+				boolean repeated = Keyboard.isRepeatEvent();
 
-    public void remove(GuiForm form)
-    {
-        this.removeForms.add(form);
-    }
+				for (GuiForm form : this.forms)
+				{
+					for (GuiElement element : form.getElements())
+					{
+						element.onKey(key, character, repeated);
+					}
+					if (!Keyboard.isRepeatEvent())
+					{
+						form.onKey(key, character);
+					}
+				}
+			}
+		}
+	}
 
-    public Theme theme()
-    {
-        return this.theme;
-    }
+	public void add(GuiForm form)
+	{
+		this.addForms.add(form);
+	}
+
+	public void remove(GuiForm form)
+	{
+		this.removeForms.add(form);
+	}
+
+	public Theme theme()
+	{
+		return this.theme;
+	}
 }

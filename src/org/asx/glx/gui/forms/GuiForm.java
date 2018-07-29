@@ -6,7 +6,6 @@ import org.asx.glx.gui.GuiPanel;
 import org.asx.glx.gui.elements.GuiElement;
 import org.lwjgl.opengl.Display;
 
-
 public abstract class GuiForm
 {
 	private ArrayList<GuiElement> elements = new ArrayList<GuiElement>();
@@ -14,6 +13,7 @@ public abstract class GuiForm
 	private ArrayList<GuiElement> removeElements = new ArrayList<GuiElement>();
 	protected GuiPanel panel;
 	protected GuiForm parentForm;
+	protected int scrollOffset = 0;
 	private int fadeToDo;
 	private float fade;
 	private int fadeX;
@@ -55,8 +55,7 @@ public abstract class GuiForm
 			}
 
 			this.fade = 1.0F - Math.abs(this.fadeX / (float) Display.getWidth());
-		}
-		else if (this.fadeToDo > 0)
+		} else if (this.fadeToDo > 0)
 		{
 			this.fadeX += this.panel.theme().fadeSpeed;
 			this.fadeToDo -= this.panel.theme().fadeSpeed;
@@ -151,5 +150,20 @@ public abstract class GuiForm
 	public void setOnScreen(boolean onScreen)
 	{
 		this.onScreen = onScreen;
+	}
+
+	public void onScroll(int dwheel)
+	{
+		this.scrollOffset += dwheel / 4;
+		
+		if (scrollOffset > 0)
+		{
+			this.scrollOffset = 0;
+		}
+	}
+
+	public int getScrollOffset()
+	{
+		return scrollOffset;
 	}
 }

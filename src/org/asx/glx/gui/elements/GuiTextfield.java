@@ -10,6 +10,7 @@ public class GuiTextfield extends GuiElement
 	public static GuiTextfield activeTextfield;
 	private GuiText text;
 	private String realText;
+	private String placeholderText;
 	private boolean isPassword;
 	private int cursorTimer;
 	private int flashTimer;
@@ -18,7 +19,8 @@ public class GuiTextfield extends GuiElement
 	{
 		super(form, x, y, width, height);
 		this.text = text;
-		this.realText = text.getString();
+		if (text != null)
+			this.realText = text.getString();
 		this.isPassword = isPassword;
 	}
 
@@ -26,12 +28,21 @@ public class GuiTextfield extends GuiElement
 	public void render()
 	{
 		super.render();
-		
+
+		if (GuiTextfield.activeTextfield != this)
+		{
+			if (this.text.getString().equals(""))
+			{
+				this.clearText();
+				this.setPlaceholderText(this.getPlaceholderText());
+			}
+		}
+
 		if (GuiTextfield.activeTextfield == this)
 		{
 			if (this.cursorTimer > 30)
 			{
-				GuiElement.renderColoredRect(this.getFadingX() + 6 + Math.min(this.text.getWidth(), 190) + 2, this.y + 4, 3, this.height - 8, this.getHoveringColor());
+				GuiElement.renderColoredRect(this.getFadingX() + 6 + this.text.getWidth() + 2, this.y + 4, 3, this.height - 8, this.getHoveringColor());
 			}
 
 			this.cursorTimer = this.cursorTimer > 60 ? 0 : this.cursorTimer + 1;
@@ -40,8 +51,7 @@ public class GuiTextfield extends GuiElement
 		if ((GuiTextfield.activeTextfield == this) || this.isMouseHovering())
 		{
 			GuiElement.renderColoredRect(this.getFadingX(), this.y, this.width, this.height, this.getHoveringColor());
-		}
-		else
+		} else
 		{
 			GuiElement.renderColoredRect(this.getFadingX(), this.y, this.width, this.height, this.getColor());
 		}
@@ -58,11 +68,10 @@ public class GuiTextfield extends GuiElement
 		{
 			GL11.glEnable(GL11.GL_SCISSOR_TEST);
 			GL11.glScissor(this.getX(), 0, this.getX() + this.getWidth(), Display.getHeight());
-			if (this.text.getWidth() > 200)
+			if (this.text.getWidth() > this.getWidth())
 			{
-				this.text.render(this.getX() + this.getWidth() - this.text.getWidth(), this.y + ((this.height - this.text.getHeight()) / 2));
-			}
-			else
+				this.text.render(this.getX() - (this.text.getWidth() + 6) + this.getWidth(), this.y + ((this.height - this.text.getHeight()) / 2));
+			} else
 			{
 				this.text.render(this.getX() + 8, this.y + ((this.height - this.text.getHeight()) / 2));
 			}
@@ -76,6 +85,11 @@ public class GuiTextfield extends GuiElement
 	{
 		this.cursorTimer = 0;
 		GuiTextfield.activeTextfield = this;
+
+		if (this.text.getString().equals(this.placeholderText))
+		{
+			this.clearText();
+		}
 	}
 
 	@Override
@@ -90,8 +104,7 @@ public class GuiTextfield extends GuiElement
 					this.text.setText(this.text.getString().substring(0, this.text.getString().length() - 1));
 					this.realText = this.realText.substring(0, this.realText.length() - 1);
 				}
-			}
-			else if ((character > 31) && (character < 126))
+			} else if ((character > 31) && (character < 126))
 			{
 				char showCharacter = this.isPassword ? '•' : character;
 				this.text.setText(this.text.getString() + showCharacter);
@@ -104,15 +117,26 @@ public class GuiTextfield extends GuiElement
 	{
 		return this.realText;
 	}
-	
+
 	public void clearText()
 	{
-	    this.text.setText("");
-	    this.realText = "";
+		this.text.setText("");
+		this.realText = "";
 	}
 
 	public void flashError()
 	{
 		this.flashTimer = 60;
+	}
+
+	public void setPlaceholderText(String placeholderText)
+	{
+		this.placeholderText = placeholderText;
+		this.text.setText(placeholderText);
+	}
+
+	public String getPlaceholderText()
+	{
+		return placeholderText;
 	}
 }

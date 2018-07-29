@@ -10,7 +10,7 @@ public class GuiButtonSprite extends GuiElement
 
 	public GuiButtonSprite(GuiForm form, int x, int y, Sprite sprite)
 	{
-		super(form, x, y, sprite.getWidth(), sprite.getHeight());
+		super(form, x, y, sprite.getImageWidth(), sprite.getImageHeight());
 		this.sprite = sprite;
 	}
 
@@ -28,7 +28,7 @@ public class GuiButtonSprite extends GuiElement
 			GL11.glColor4f(1, 1, 1, 1);
 		}
 
-		this.sprite.render(this.getFadingX(), this.y, (int) (this.width * 1.75D), (int) (this.height * 1.75D));
+		this.sprite.draw(this.getFadingX(), this.y, (int) (this.width * 1.75D), (int) (this.height * 1.75D));
 
 		GL11.glColor4f(1, 1, 1, 1);
 	}

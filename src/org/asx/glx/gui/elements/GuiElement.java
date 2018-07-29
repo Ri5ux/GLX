@@ -17,8 +17,14 @@ public abstract class GuiElement
 	protected Color color;
 	protected Color hoveringColor;
 	protected Color borderColor;
+	protected Color backgroundColor;
+	protected Color hoveringBackgroundColor;
 	protected boolean shouldRender;
 	protected boolean hasBorder;
+	protected int leftPadding;
+	protected int rightPadding;
+	protected int topPadding;
+	protected int bottomPadding;
 
 	public GuiElement(GuiForm form, int x, int y, int width, int height)
 	{
@@ -63,6 +69,8 @@ public abstract class GuiElement
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		GL11.glBegin(GL11.GL_QUADS);
+		
+		if (color != null)
 		color.bind();
 
 		GL11.glVertex3f(x, y, 0);
@@ -265,5 +273,59 @@ public abstract class GuiElement
 	{
 		this.setHasBorder(true);
 		this.borderSize = borderSize;
+	}
+	
+	public Color getBackgroundColor()
+	{
+		return backgroundColor;
+	}
+	
+	public void setBackgroundColor(Color backgroundColor)
+	{
+		this.backgroundColor = backgroundColor;
+	}
+	
+	public int getBottomPadding()
+	{
+		return bottomPadding;
+	}
+	public int getLeftPadding()
+	{
+		return leftPadding;
+	}
+	public int getRightPadding()
+	{
+		return rightPadding;
+	}
+	public int getTopPadding()
+	{
+		return topPadding;
+	}
+	
+	public void setBottomPadding(int bottomPadding)
+	{
+		this.bottomPadding = bottomPadding;
+	}
+	public void setLeftPadding(int leftPadding)
+	{
+		this.leftPadding = leftPadding;
+	}
+	public void setRightPadding(int rightPadding)
+	{
+		this.rightPadding = rightPadding;
+	}
+	public void setTopPadding(int topPadding)
+	{
+		this.topPadding = topPadding;
+	}
+	
+	public Color getHoveringBackgroundColor()
+	{
+		return hoveringBackgroundColor;
+	}
+	
+	public void setHoveringBackgroundColor(Color hoveringBackgroundColor)
+	{
+		this.hoveringBackgroundColor = hoveringBackgroundColor;
 	}
 }
