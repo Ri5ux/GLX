@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import org.asx.glx.gui.forms.GuiForm;
+import org.asx.glx.opengl.Draw;
 import org.asx.glx.opengl.GaussianFilter;
 import org.asx.glx.opengl.Sprite;
 import org.newdawn.slick.Color;
@@ -103,6 +104,7 @@ public class GuiText extends GuiElement
 
 			this.getColor().bind();
 			this.cachedText.draw(this.leftPadding + this.getFadingX(), this.topPadding + y);
+			Draw.resetColor();
 		}
 	}
 
@@ -113,7 +115,7 @@ public class GuiText extends GuiElement
 
 	public void setText(String text)
 	{
-		if (!text.equals(this.text))
+		if (text != null && !text.equals(this.text))
 		{
 			this.text = text;
 			this.isDirty = true;
