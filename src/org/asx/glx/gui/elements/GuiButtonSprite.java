@@ -21,14 +21,16 @@ public class GuiButtonSprite extends GuiElement
 
 		if (this.isMouseHovering())
 		{
-			this.hoveringColor.bind();
-		}
-		else
+			if (hoveringColor != null)
+			{
+				this.hoveringColor.bind();
+			}
+		} else
 		{
 			GL11.glColor4f(1, 1, 1, 1);
 		}
 
-		this.sprite.draw(this.getFadingX(), this.y, (int) (this.width * 1.75D), (int) (this.height * 1.75D));
+		this.sprite.draw(this.getFadingX(), this.y, (int) (this.width), (int) (this.height));
 
 		GL11.glColor4f(1, 1, 1, 1);
 	}
@@ -37,7 +39,7 @@ public class GuiButtonSprite extends GuiElement
 	{
 		this.sprite = sprite;
 	}
-	
+
 	public Sprite getSprite()
 	{
 		return sprite;
