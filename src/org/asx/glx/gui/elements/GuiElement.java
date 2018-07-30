@@ -25,6 +25,12 @@ public abstract class GuiElement
 	protected int rightPadding;
 	protected int topPadding;
 	protected int bottomPadding;
+	protected IAction<GuiElement> clickAction;
+	
+	public static interface IAction<T extends Object>
+	{
+		public void run(T o);
+	}
 
 	public GuiElement(GuiForm form, int x, int y, int width, int height)
 	{
@@ -48,12 +54,28 @@ public abstract class GuiElement
 
 	public void render()
 	{
+		Color buttonColor = null;
+
+		if (this.isMouseHovering())
+		{
+			buttonColor = this.hoveringBackgroundColor;
+		}
+		else
+		{
+			buttonColor = this.backgroundColor;
+		}
+
+		if (buttonColor != null)
+		{
+			GuiElement.renderColoredRect(this.x, this.getY(), this.width, this.height, buttonColor);
+		}
+
 		if (this.hasBorder())
 		{
-			GuiElement.renderColoredRect(this.getFadingX() - borderSize, this.y, this.width + (borderSize * 2), -borderSize, borderColor);
-			GuiElement.renderColoredRect(this.getFadingX() + this.width, this.y, borderSize, this.height, borderColor);
-			GuiElement.renderColoredRect(this.getFadingX() - borderSize, this.y + this.height, this.width + (borderSize * 2), borderSize, borderColor);
-			GuiElement.renderColoredRect(this.getFadingX(), this.y, -borderSize, this.height, borderColor);
+			GuiElement.renderColoredRect(this.getFadingX() - borderSize, this.getY(), this.width + (borderSize * 2), -borderSize, borderColor);
+			GuiElement.renderColoredRect(this.getFadingX() + this.width, this.getY(), borderSize, this.height, borderColor);
+			GuiElement.renderColoredRect(this.getFadingX() - borderSize, this.getY() + this.height, this.width + (borderSize * 2), borderSize, borderColor);
+			GuiElement.renderColoredRect(this.getFadingX(), this.getY(), -borderSize, this.height, borderColor);
 		}
 	}
 
@@ -69,9 +91,9 @@ public abstract class GuiElement
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 
 		GL11.glBegin(GL11.GL_QUADS);
-		
+
 		if (color != null)
-		color.bind();
+			color.bind();
 
 		GL11.glVertex3f(x, y, 0);
 		GL11.glVertex3f(x + width, y, 0);
@@ -95,8 +117,7 @@ public abstract class GuiElement
 			GL11.glVertex3f(x, y, 0);
 			GL11.glVertex3f(x + width, y + (height / 2.F), 0);
 			GL11.glVertex3f(x, y + height, 0);
-		}
-		else
+		} else
 		{
 			GL11.glVertex3f(x + width, y, 0);
 			GL11.glVertex3f(x, y + (height / 2.F), 0);
@@ -111,7 +132,7 @@ public abstract class GuiElement
 
 	public boolean containsPoint(int x, int y)
 	{
-		return (x >= this.getFadingX()) && (x <= (this.getFadingX() + this.width)) && (y >= this.y) && (y <= (this.y + this.height));
+		return (x >= this.getFadingX()) && (x <= (this.getFadingX() + this.width)) && (y >= this.getY()) && (y <= (this.getY() + this.height));
 	}
 
 	public boolean isMouseHovering()
@@ -143,10 +164,23 @@ public abstract class GuiElement
 	{
 		return this.height;
 	}
+	
+	public IAction<GuiElement> getClickAction()
+	{
+		return clickAction;
+	}
+	
+	public void setClickAction(IAction<GuiElement> clickAction)
+	{
+		this.clickAction = clickAction;
+	}
 
 	public void onMouseClick()
 	{
-		;
+		if (this.clickAction != null && this.shouldRender())
+		{
+			this.clickAction.run(this);
+		}
 	}
 
 	public void onKey(int key, char character, boolean repeated)
@@ -242,88 +276,94 @@ public abstract class GuiElement
 		this.setPosition(x, y);
 		this.setSize(w, h);
 	}
-	
+
 	public Color getBorderColor()
 	{
 		return borderColor;
 	}
-	
+
 	public int getBorderSize()
 	{
 		return borderSize;
 	}
-	
+
 	public boolean hasBorder()
 	{
 		return hasBorder;
 	}
-	
+
 	public void setHasBorder(boolean hasBorder)
 	{
 		this.hasBorder = hasBorder;
 	}
-	
+
 	public void setBorderColor(Color borderColor)
 	{
 		this.setHasBorder(true);
 		this.borderColor = borderColor;
 	}
-	
+
 	public void setBorderSize(int borderSize)
 	{
 		this.setHasBorder(true);
 		this.borderSize = borderSize;
 	}
-	
+
 	public Color getBackgroundColor()
 	{
 		return backgroundColor;
 	}
-	
+
 	public void setBackgroundColor(Color backgroundColor)
 	{
 		this.backgroundColor = backgroundColor;
 	}
-	
+
 	public int getBottomPadding()
 	{
 		return bottomPadding;
 	}
+
 	public int getLeftPadding()
 	{
 		return leftPadding;
 	}
+
 	public int getRightPadding()
 	{
 		return rightPadding;
 	}
+
 	public int getTopPadding()
 	{
 		return topPadding;
 	}
-	
+
 	public void setBottomPadding(int bottomPadding)
 	{
 		this.bottomPadding = bottomPadding;
 	}
+
 	public void setLeftPadding(int leftPadding)
 	{
 		this.leftPadding = leftPadding;
 	}
+
 	public void setRightPadding(int rightPadding)
 	{
 		this.rightPadding = rightPadding;
 	}
+
 	public void setTopPadding(int topPadding)
 	{
 		this.topPadding = topPadding;
 	}
-	
+
 	public Color getHoveringBackgroundColor()
 	{
 		return hoveringBackgroundColor;
 	}
-	
+
 	public void setHoveringBackgroundColor(Color hoveringBackgroundColor)
 	{
 		this.hoveringBackgroundColor = hoveringBackgroundColor;
