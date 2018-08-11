@@ -139,4 +139,15 @@ public class GuiTextfield extends GuiElement
 	{
 		return placeholderText;
 	}
+	
+	public void setText(String text)
+    {
+	    this.clearText();
+	    GuiTextfield.activeTextfield = this;
+	    
+	    for (char c : text.toCharArray())
+        {
+            this.onKey(Keyboard.getKeyIndex(c + ""), c, true);
+        }
+    }
 }
