@@ -1,9 +1,15 @@
 package org.asx.glx.gui.forms;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.asx.glx.gui.GuiPanel;
 import org.asx.glx.gui.elements.GuiElement;
+import org.asx.glx.gui.elements.GuiTextfield;
 import org.lwjgl.opengl.Display;
 
 public abstract class GuiForm
@@ -90,6 +96,43 @@ public abstract class GuiForm
 
 	public void onKey(int key, char character)
 	{
+	    String charUnicodeValue = "\\u" + Integer.toHexString(character | 0x10000).substring(1);
+
+        if (charUnicodeValue.equalsIgnoreCase("\\u0016"))
+        {
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            try
+            {
+                Object clipboardData = clipboard.getData(DataFlavor.stringFlavor);
+
+                if (clipboardData instanceof String)
+                {
+                    String clipboardText = (String) clipboardData;
+                    
+                    for (GuiElement e : this.getElements())
+                    {
+                        if (e instanceof GuiTextfield)
+                        {
+                            GuiTextfield textfield = (GuiTextfield) e;
+                            
+                            if (GuiTextfield.activeTextfield == e)
+                            {
+                                for (char c : clipboardText.toCharArray())
+                                {
+                                    textfield.onKey(key, c, true);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (UnsupportedFlavorException e)
+            {
+                e.printStackTrace();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	public void add(GuiElement element)
