@@ -6,6 +6,11 @@ public class ResourceLocation
 {
 	private File location;
 	
+	public ResourceLocation(ResourceLocation path, String location)
+	{
+	    this(path.getLocation(), location);
+	}
+	
 	public ResourceLocation(File parentDirectory, String location)
 	{
 		this.location = new File(parentDirectory, location);
