@@ -1,7 +1,7 @@
 package org.asx.glx.opengl;
 
-import static org.lwjgl.opengl.GL11.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -17,13 +17,34 @@ public class Sprite implements Texture
     private int width;
     private int height;
 
-    public static Sprite load(ResourceLocation resource)
+    public static Sprite load(String path)
     {
         Sprite sprite = null;
 
         try
         {
-            BufferedImage img = ImageIO.read(resource.getLocation());
+            BufferedImage img = ImageIO.read(Sprite.class.getClassLoader().getResourceAsStream(path));
+
+            if (img != null)
+            {
+                sprite = new Sprite(img);
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return sprite;
+    }
+
+    public static Sprite load(File file)
+    {
+        Sprite sprite = null;
+
+        try
+        {
+            BufferedImage img = ImageIO.read(file);
 
             if (img != null)
             {
