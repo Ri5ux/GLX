@@ -65,9 +65,14 @@ public abstract class GuiElement
 			buttonColor = this.backgroundColor;
 		}
 
+        if (this.backgroundColor != null)
+        {
+            GuiElement.renderColoredRect(this.getX(), this.getY(), this.getWidth() + rightPadding * 2, this.getHeight() + bottomPadding * 2, this.backgroundColor);
+        }
+
 		if (buttonColor != null)
 		{
-			GuiElement.renderColoredRect(this.x, this.getY(), this.width, this.height, buttonColor);
+			GuiElement.renderColoredRect(this.getX(), this.getY(), this.width, this.height, buttonColor);
 		}
 
 		if (this.hasBorder())
@@ -317,6 +322,27 @@ public abstract class GuiElement
 	public void setBackgroundColor(Color backgroundColor)
 	{
 		this.backgroundColor = backgroundColor;
+	}
+	
+	public void setPadding(int padding)
+	{
+	    this.setPadding(padding, padding, padding, padding);
+	}
+	
+	public void setPadding(int width, int height)
+	{
+	    this.leftPadding = width;
+	    this.rightPadding = width;
+	    this.topPadding = height;
+	    this.bottomPadding = height;
+	}
+	
+	public void setPadding(int left, int right, int top, int bottom)
+	{
+	    this.leftPadding = left;
+	    this.rightPadding = right;
+	    this.topPadding = top;
+	    this.bottomPadding = bottom;
 	}
 
 	public int getBottomPadding()

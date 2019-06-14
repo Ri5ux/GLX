@@ -8,7 +8,6 @@ import java.awt.image.BufferedImage;
 
 import org.asx.glx.gui.forms.GuiForm;
 import org.asx.glx.opengl.Draw;
-import org.asx.glx.opengl.GaussianFilter;
 import org.asx.glx.opengl.Sprite;
 import org.newdawn.slick.Color;
 
@@ -22,10 +21,12 @@ public class GuiText extends GuiElement
 	private Sprite cachedText;
 	private Sprite cachedTextShadow;
 	private boolean isDirty;
+	private boolean autoWidth;
 
 	public GuiText(GuiForm form, Font font, String text, Color color, Color shadowColor, boolean applyShadow)
 	{
 		super(form, color);
+		this.autoWidth = true;
 		this.font = font;
 		this.text = text;
 		this.shadowColor = shadowColor;
@@ -54,6 +55,7 @@ public class GuiText extends GuiElement
 	@Override
 	public void render(int x, int y)
 	{
+	    super.render();
 		this.x = x;
 		this.y = y;
 
@@ -79,17 +81,16 @@ public class GuiText extends GuiElement
 				gt.setColor(java.awt.Color.WHITE);
 				gt.drawString(this.text, 0, this.fontMetrics.getAscent());
 
-				if (this.applyShadow)
-				{
-					BufferedImage blurredImage = new BufferedImage(this.getWidth() + 4, this.getHeight() + 4, BufferedImage.TYPE_INT_ARGB);
-
-					GaussianFilter gaussianFilter = new GaussianFilter(7);
-					gaussianFilter.filter(fontImage, blurredImage);
-
-					blurredImage.getGraphics().drawImage(fontImage, 0, 0, null);
-					this.cachedTextShadow = new Sprite(blurredImage);
-				}
-
+//				if (this.applyShadow)
+//				{
+//					BufferedImage blurredImage = new BufferedImage(this.getWidth() + 4, this.getHeight() + 4, BufferedImage.TYPE_INT_ARGB);
+//
+//					GaussianFilter gaussianFilter = new GaussianFilter(4);
+//					gaussianFilter.filter(fontImage, blurredImage);
+//
+//					this.cachedTextShadow = new Sprite(blurredImage);
+//				}
+//
 				this.cachedText = new Sprite(fontImage);
 
 				this.isDirty = false;
@@ -99,10 +100,11 @@ public class GuiText extends GuiElement
 			{
 				Color col = new Color(this.shadowColor.r, this.shadowColor.g, this.shadowColor.b, this.shadowColor.a * this.form.getFade());
 				col.bind();
-				this.cachedTextShadow.draw(this.leftPadding + this.getFadingX(), this.topPadding + y);
+//				this.cachedTextShadow.draw(this.leftPadding + this.getFadingX(), this.topPadding + y);
 			}
 
 			this.getColor().bind();
+//			FontRenderer.drawString(this.getString(), x, y);
 			this.cachedText.draw(this.leftPadding + this.getFadingX(), this.topPadding + y);
 			Draw.resetColor();
 		}
@@ -125,7 +127,7 @@ public class GuiText extends GuiElement
 	@Override
 	public int getWidth()
 	{
-		return this.fontMetrics != null && this.text != null ? this.fontMetrics.stringWidth(this.text) : 0;
+		return this.autoWidth ? (this.fontMetrics != null && this.text != null ? this.fontMetrics.stringWidth(this.text) : 0 ) : super.getWidth();
 	}
 
 	@Override
@@ -138,4 +140,31 @@ public class GuiText extends GuiElement
 	{
 		return this.font;
 	}
+	
+	public void setFont(Font font)
+    {
+        this.font = font;
+    }
+	
+	public void setAutoWidth(boolean autoWidth)
+    {
+        this.autoWidth = autoWidth;
+    }
+	
+	public boolean isAutoWidth()
+    {
+        return autoWidth;
+    }
+	
+	@Override
+	public void setWidth(int width)
+	{
+	    super.setWidth(width);
+	    this.setAutoWidth(false);
+	}
+	
+	public void setApplyShadow(boolean applyShadow)
+    {
+        this.applyShadow = applyShadow;
+    }
 }
